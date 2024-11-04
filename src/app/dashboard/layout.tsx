@@ -1,15 +1,21 @@
 'use client';
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import AuthContextProvider from '../hooks/authContext.tsx';
-import NavBar from '../components/NavBar.tsx';
+import AuthContextProvider from '../hooks/AuthContext.tsx';
+import { UserProvider } from '../hooks/UserContext.tsx';
+import DashboardPage from '../components/DashboardPage.tsx';
+import Loading from './loading.tsx';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
-    <div>
-      <AuthContextProvider>
-        <NavBar>{children}</NavBar>
-      </AuthContextProvider>
-    </div>
+    <>
+      <Suspense fallback={<Loading />}>
+        <AuthContextProvider>
+          <UserProvider>
+            <DashboardPage>{children}</DashboardPage>
+          </UserProvider>
+        </AuthContextProvider>
+      </Suspense>
+    </>
   );
 }

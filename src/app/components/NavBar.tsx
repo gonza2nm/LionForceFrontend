@@ -1,125 +1,213 @@
 import Link from 'next/link';
 import {
-  Button,
   Col,
   Container,
+  Dropdown,
   Nav,
   Navbar,
   Offcanvas,
   Row,
 } from 'react-bootstrap';
-import { useAuthContext } from '../hooks/authContext.tsx';
-import { useRouter } from 'next/navigation';
+import { useAuthContext } from '../hooks/AuthContext.tsx';
 import { ReactNode, useState } from 'react';
+import { IoMenu } from 'react-icons/io5';
+import { FaUserCircle } from 'react-icons/fa';
 
-export default function NavBar({ children }: { children: ReactNode }) {
+export default function NavBar({
+  children,
+  name,
+  dni,
+}: {
+  children: ReactNode;
+  name: string;
+  dni: string;
+}) {
   const { logout } = useAuthContext();
-  const router = useRouter();
   const closeSession = async () => {
     await logout();
-    router.push('/auth/login');
+    window.location.href = '/';
   };
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
   return (
     <Container fluid>
       <Row>
-        {/* Sidebar visible only on medium screens and larger */}
         <Col md="auto" className="d-none d-md-block bg-primary vh-100 w-auto">
           <Nav
             className="bg-primary
-             flex-column p-3"
+             flex-column p-2 vh-100 justify-content-between"
           >
-            <Nav.Link as={Link} className="text-bg-primary" href="/dashboard">
-              Inicio
-            </Nav.Link>
-            <Nav.Link
-              as={Link}
-              className="text-bg-primary"
-              href="/dashboard/alumnos"
-            >
-              Alumnos
-            </Nav.Link>
-            <Nav.Link
-              as={Link}
-              className="text-bg-primary"
-              href="/dashboard/servicios"
-            >
-              Servicios
-            </Nav.Link>
-            <Nav.Link
-              as={Link}
-              className="text-bg-primary"
-              href="/dashboard/productos"
-            >
-              Productos
-            </Nav.Link>
-            <Nav.Link
-              as={Link}
-              className="text-bg-primary"
-              href="/dashboard/torneos"
-            >
-              Torneos
-            </Nav.Link>
-            <Nav.Link
-              as={Link}
-              onClick={() => {
-                closeSession();
-              }}
-              href=""
-              className="text-bg-primary"
-            >
-              Close Sesion
-            </Nav.Link>
+            <Container>
+              <Nav.Link
+                as={Link}
+                className="text-light nav-link-hover-desk"
+                href="/dashboard"
+              >
+                Inicio
+              </Nav.Link>
+              <Nav.Link
+                as={Link}
+                className="text-light nav-link-hover-desk"
+                href="/dashboard/alumnos"
+              >
+                Alumnos
+              </Nav.Link>
+              <Nav.Link
+                as={Link}
+                className="text-light nav-link-hover-desk"
+                href="/dashboard/servicios"
+              >
+                Servicios
+              </Nav.Link>
+              <Nav.Link
+                as={Link}
+                className="text-light nav-link-hover-desk"
+                href="/dashboard/productos"
+              >
+                Productos
+              </Nav.Link>
+              <Nav.Link
+                as={Link}
+                className="text-light nav-link-hover-desk"
+                href="/dashboard/torneos"
+              >
+                Torneos
+              </Nav.Link>
+            </Container>
+            <Dropdown className="my-2" drop="up-centered">
+              <Dropdown.Toggle
+                variant="link"
+                id="dropdown-profile"
+                className="d-flex align-items-center text-white text-decoration-none"
+              >
+                <FaUserCircle size={24} className="me-2" />
+                <span>{name}</span>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  as={Link}
+                  href={`/dashboard/profile/${dni}`}
+                  className="nav-link-hover-mob"
+                >
+                  Ver Perfil
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item
+                  className="nav-link-hover-mob"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    closeSession();
+                  }}
+                >
+                  Cerrar Sesión
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </Nav>
         </Col>
-
-        {/* Main content for small screens */}
-        <Col md={9} className="d-block d-md-none">
-          <Navbar bg="light" expand="md">
-            <Button variant="primary" onClick={handleShow}>
-              Open Menu
-            </Button>
+        <Col md={9} className="d-block d-md-none bg-primary">
+          <Navbar expand="md" className="d-flex justify-content-end ">
+            <IoMenu
+              onClick={handleShow}
+              size={36}
+              color="white"
+              className="cursor-pointer"
+            />
           </Navbar>
-
-          {/* Offcanvas for small screens */}
           <Offcanvas show={show} onHide={handleClose} responsive="md">
             <Offcanvas.Header closeButton>
               <Offcanvas.Title>Menu</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className="flex-column">
-                <Nav.Link as={Link} href="/dashboard">
-                  Inicio
-                </Nav.Link>
-                <Nav.Link as={Link} href="/dashboard/alumnos">
-                  Alumnos
-                </Nav.Link>
-                <Nav.Link as={Link} href="/dashboard/servicios">
-                  Servicios
-                </Nav.Link>
-                <Nav.Link as={Link} href="/dashboard/productos">
-                  Productos
-                </Nav.Link>
-                <Nav.Link as={Link} href="/dashboard/torneos">
-                  Torneos
-                </Nav.Link>
                 <Nav.Link
+                  className="text-dark nav-link-hover-mob"
                   as={Link}
                   onClick={() => {
-                    closeSession();
+                    handleClose();
                   }}
-                  href=""
+                  href="/dashboard"
                 >
-                  Close Sesion
+                  Inicio
                 </Nav.Link>
+                <Nav.Link
+                  className="text-dark nav-link-hover-mob"
+                  as={Link}
+                  onClick={() => {
+                    handleClose();
+                  }}
+                  href="/dashboard/alumnos"
+                >
+                  Alumnos
+                </Nav.Link>
+                <Nav.Link
+                  className="text-dark nav-link-hover-mob"
+                  as={Link}
+                  onClick={() => {
+                    handleClose();
+                  }}
+                  href="/dashboard/servicios"
+                >
+                  Servicios
+                </Nav.Link>
+                <Nav.Link
+                  className="text-dark nav-link-hover-mob"
+                  as={Link}
+                  onClick={() => {
+                    handleClose();
+                  }}
+                  href="/dashboard/productos"
+                >
+                  Productos
+                </Nav.Link>
+                <Nav.Link
+                  className="text-dark nav-link-hover-mob"
+                  as={Link}
+                  onClick={() => {
+                    handleClose();
+                  }}
+                  href="/dashboard/torneos"
+                >
+                  Torneos
+                </Nav.Link>
+                <Dropdown className="my-2 text-bg" drop="down-centered">
+                  <Dropdown.Toggle
+                    variant="link"
+                    id="dropdown-profile"
+                    className="d-flex align-items-center text-dark text-decoration-none"
+                  >
+                    <FaUserCircle size={24} className="me-2" />
+                    <span>{name}</span>
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    <Dropdown.Item
+                      href="/profile"
+                      className="nav-link-hover-mob"
+                    >
+                      Ver Perfil
+                    </Dropdown.Item>
+                    <Dropdown.Divider />
+                    <Dropdown.Item
+                      className="nav-link-hover-mob"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        closeSession();
+                      }}
+                    >
+                      Cerrar Sesión
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
               </Nav>
             </Offcanvas.Body>
           </Offcanvas>
         </Col>
-        <Col md={true} className="p-3">
+        <Col md={true} as="main" className="p-3">
           {children}
         </Col>
       </Row>

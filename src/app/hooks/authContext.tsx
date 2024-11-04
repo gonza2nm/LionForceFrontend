@@ -1,26 +1,22 @@
 'use client';
-
 import {
   ReactNode,
   createContext,
   useCallback,
   useContext,
-  useMemo,
+  useState,
 } from 'react';
 import Cookies from 'js-cookie';
 
 type AuthTokens = {
   token: string;
-  refresh_token: string;
 };
-export type RolType = { rol: 'admin' | 'instructor' | 'alumno' };
 
-//arreglar el problema del contexto en el rol
 export type AuthContextType = {
   login: (authTokens: AuthTokens) => void;
   logout: () => void;
-  academyId: number;
-  rol: number;
+  setToken: (token: string | null) => void;
+  token: string | null;
 };
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
@@ -30,32 +26,27 @@ export default function AuthContextProvider({
 }: {
   children: ReactNode;
 }) {
-  const rol = 0;
-  const academyId = 0;
+  const [token, setToken] = useState<string | null>(null);
+
   const login = useCallback(async function (authTokens: AuthTokens) {
+    setToken(authTokens.token);
     Cookies.set('authTokens', JSON.stringify(authTokens), {
-      expires: 7,
       secure: false,
-      sameSite: 'Strict',
+      sameSite: 'Lax',
       path: '/',
     });
   }, []);
 
   const logout = useCallback(async function () {
-    Cookies.remove('authTokens');
+    setToken(null);
+    Cookies.remove('authTokens', { path: '/' });
   }, []);
 
-  const value = useMemo(
-    () => ({
-      login,
-      logout,
-      academyId,
-      rol,
-    }),
-    [login, logout, academyId, rol]
+  return (
+    <AuthContext.Provider value={{ login, logout, setToken, token }}>
+      {children}
+    </AuthContext.Provider>
   );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuthContext() {

@@ -1,0 +1,22 @@
+.cursor-pointer {
+  cursor: pointer;
+}
+.chart-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 400px;
+  margin: 20px auto 0px auto;
+  gap: 10px;
+  height: 75%;
+}
+
+.nav-link-hover-mob:hover {
+  color: #0056b3 !important;
+  background-color: transparent !important;
+}
+.nav-link-hover-desk:hover {
+  color: #44484d !important;
+  background-color: transparent !important;
+}
